@@ -69,7 +69,7 @@ export class VerificationBot {
   private async handleButtonInteraction(interaction: ButtonInteraction) {
     if (!interaction.customId.startsWith('verify_')) return;
 
-      const originalState = interaction.customId.replace('verify_', '');
+    const originalState = interaction.customId.replace('verify_', '');
     
     try {
       const { v4: uuidv4 } = await import('uuid');
@@ -81,7 +81,7 @@ export class VerificationBot {
 
       if (!originalSession) {
         await interaction.reply({
-          content: 'This verification panel is no longer valid. Please ask an admin to create a new one.',
+          content: '❌ This verification panel is no longer valid. Please contact an administrator to create a new one.',
           flags: 64,
         });
         return;
@@ -105,7 +105,7 @@ export class VerificationBot {
       const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CONFIG.discord.clientId}&redirect_uri=${encodeURIComponent(CONFIG.server.baseUrl + '/verify')}&response_type=code&scope=identify&state=${newState}`;
 
       const oauthButton = new ButtonBuilder()
-        .setLabel('Verify yourself!')
+        .setLabel('Continue to Verification')
         .setStyle(ButtonStyle.Link)
         .setURL(oauthUrl);
 
@@ -113,7 +113,7 @@ export class VerificationBot {
         .addComponents(oauthButton);
 
       await interaction.reply({
-        content: '**Click the button below to complete verification:**\n\n*This will open Discord authorization in a new tab.*',
+        content: '🔐 **Verification Process**\n\nClick the button below to authorize with Discord. You will be redirected back once complete.',
         components: [row],
         flags: 64,
       });
@@ -124,10 +124,12 @@ export class VerificationBot {
 
     } catch (error) {
       console.error('error handling interaction for btn:', error);
-      await interaction.reply({
-        content: 'An error occurred during verification. Please try again.',
-        flags: 64,
-      });
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({
+          content: '❌ An error occurred. Please try again or contact support if the issue persists.',
+          flags: 64,
+        });
+      }
     }
   }
 

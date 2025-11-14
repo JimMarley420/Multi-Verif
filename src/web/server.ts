@@ -148,7 +148,7 @@ export class WebServer {
         return {
           success: false,
           reason: 'proxy',
-          message: 'Verification failed: VPN/Proxy detected. Please disable your VPN and try again.',
+          message: 'We detected that you are using a VPN or proxy. Please disable it and try verifying again. If you believe this is an error, contact our support team.',
         };
       }
 
@@ -167,7 +167,7 @@ export class WebServer {
         return {
           success: false,
           reason: 'alt_account',
-          message: 'We believe that you have already verified on another Discord account. If you think we made a mistake, make a ticket and explain your situation.',
+          message: 'An account from your network has already been verified. If you believe this is a mistake, please contact support with details about your situation.',
         };
       }
 
@@ -179,7 +179,7 @@ export class WebServer {
             return {
               success: true,
               reason: 'already_had_role',
-              message: 'You already have this role, so nothing was changed.',
+              message: 'Your account is already verified. You have the required role and can access all server features.',
             };
           }
         } catch (error) {
@@ -195,7 +195,7 @@ export class WebServer {
         return {
           success: false,
           reason: 'error',
-          message: 'Verification failed: Unable to grant role. Please contact an admin!',
+          message: 'We were unable to assign your role. Please contact a server administrator for assistance.',
         };
       }
       
@@ -241,7 +241,7 @@ export class WebServer {
       return {
         success: true,
         reason: 'success',
-        message: 'You have been given access to whatever role you were verifying for.',
+        message: 'Verification complete! Your role has been assigned and you now have full access to the server.',
       };
 
     } catch (error) {
@@ -249,7 +249,7 @@ export class WebServer {
       return {
         success: false,
         reason: 'error',
-        message: 'Oh no! An error happened during the verification process. Please try again.',
+        message: 'An unexpected error occurred during verification. Please try again or contact support if the issue persists.',
       };
     }
   }
@@ -383,21 +383,21 @@ export class WebServer {
       let content: string;
       if (result.success || result.reason === 'already_had_role') {
         if (result.reason === 'already_had_role') {
-          content = `**Already Verified!**\n\nYou already have this role.`;
+          content = `✅ **Already Verified**\n\nYour account is already verified. You have the required role and can access all server features.`;
         } else {
-          content = `**Verification Successful!**\n\nYou have been successfully verified and granted the required role.`;
+          content = `✅ **Verification Complete**\n\nYour role has been assigned successfully. You now have full access to the server.`;
         }
       } else {
-        let failureMessage = "**Verification Failed**\n\n";
+        let failureMessage = "❌ **Verification Failed**\n\n";
         switch (result.reason) {
           case 'proxy':
-            failureMessage += "VPN/Proxy detected. Please disable your VPN and try again.";
+            failureMessage += "We detected a VPN or proxy. Please disable it and try again.\n\nIf this is an error, contact support.";
             break;
           case 'alt_account':
-            failureMessage += "We believe that you have already verified on another Discord account. If you think we made a mistake, make a ticket and explain your situation.";
+            failureMessage += "An account from your network is already verified.\n\nIf this is a mistake, contact support with details.";
             break;
           default:
-            failureMessage += "An error occurred during verification. Please retry or contact support.";
+            failureMessage += "An unexpected error occurred.\n\nPlease try again or contact support if the issue persists.";
         }
         content = failureMessage;
       }
@@ -436,9 +436,8 @@ export class WebServer {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Failed</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Verification Error</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -447,84 +446,106 @@ export class WebServer {
         }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            overflow-x: hidden;
+            background: #f8f9fa;
+            color: #1f2937;
+            line-height: 1.6;
         }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
         }
         .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            animation: fadeInUp 0.6s ease-out;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            width: 100%;
+            padding: 3rem 2rem;
+            text-align: center;
         }
-        .icon-container {
-            animation: float 3s ease-in-out infinite, fadeInUp 0.8s ease-out;
+        .icon {
+            width: 64px;
+            height: 64px;
+            background: #fee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
         }
-        .title {
-            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        .icon svg {
+            width: 32px;
+            height: 32px;
+            color: #dc2626;
         }
-        .message {
-            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #1d4ed8;
+        }
+        .btn svg {
+            width: 18px;
+            height: 18px;
         }
         .footer {
-            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            color: #9ca3af;
         }
-        .support-btn {
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
+        .footer a {
+            color: #2563eb;
+            text-decoration: none;
         }
-        .support-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+        .footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="card max-w-lg w-full p-8 md:p-12 text-center">
-        <div class="icon-container mx-auto flex items-center justify-center h-20 w-20 md:h-24 md:w-24 rounded-full bg-gradient-to-br from-red-400 to-red-600 mb-6 shadow-lg">
-            <svg class="h-10 w-10 md:h-12 md:w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="icon">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </div>
+            <h1>Verification Error</h1>
+            <p>${message}</p>
+            <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer" class="btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                Contact Support
+            </a>
         </div>
-        <h1 class="title text-4xl md:text-5xl font-bold text-white mb-6 drop-shadow-lg">Verification Failed</h1>
-        <p class="message text-lg md:text-xl text-white/90 leading-relaxed mb-8">${message}</p>
-        <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer" class="support-btn inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-semibold border border-white/30">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-            </svg>
-            Contact Support
-        </a>
-    </div>
-    <div class="footer mt-8 text-center">
-        <p class="text-white/70 text-sm">Need help? <a href="https://multichat.cloud/support" class="text-white font-semibold hover:underline" target="_blank" rel="noopener noreferrer">Visit our support page</a></p>
+        <div class="footer">
+            Need assistance? <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer">Visit our support page</a>
+        </div>
     </div>
 </body>
 </html>`;
@@ -533,30 +554,26 @@ export class WebServer {
   private renderResultPage(result: any): string {
     const isSuccess = result.success;
     
-    let gradientColors = 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)';
-    let iconGradient = 'from-red-400 to-red-600';
-    let icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />';
+    let iconBg = '#fee';
+    let iconColor = '#dc2626';
+    let icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
     let title = 'Verification Failed';
-    let emoji = '❌';
 
     if (isSuccess) {
-      gradientColors = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
-      iconGradient = 'from-green-400 to-emerald-600';
-      icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />';
+      iconBg = '#d1fae5';
+      iconColor = '#059669';
+      icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />';
       title = 'Verification Successful';
-      emoji = '✅';
     } else if (result.reason === 'alt_account') {
-      gradientColors = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
-      iconGradient = 'from-orange-400 to-red-600';
-      icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />';
-      title = 'Account Already Verified';
-      emoji = '👤';
+      iconBg = '#fee2e2';
+      iconColor = '#dc2626';
+      icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />';
+      title = 'Alternate Account Detected';
     } else if (result.reason === 'proxy') {
-      gradientColors = 'linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 50%, #2BFF88 100%)';
-      iconGradient = 'from-purple-400 to-blue-600';
-      icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />';
+      iconBg = '#dbeafe';
+      iconColor = '#2563eb';
+      icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />';
       title = 'VPN/Proxy Detected';
-      emoji = '🛡️';
     }
 
     return `
@@ -566,8 +583,7 @@ export class WebServer {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -576,106 +592,107 @@ export class WebServer {
         }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: ${gradientColors};
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            overflow-x: hidden;
+            background: #f8f9fa;
+            color: #1f2937;
+            line-height: 1.6;
         }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
         }
         .card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-            animation: fadeInUp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            width: 100%;
+            padding: 3rem 2rem;
+            text-align: center;
         }
-        .icon-container {
-            animation: float 4s ease-in-out infinite, scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+        .icon {
+            width: 64px;
+            height: 64px;
+            background: ${iconBg};
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
         }
-        .title {
-            animation: fadeInUp 0.8s ease-out 0.2s backwards;
-            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        .icon svg {
+            width: 32px;
+            height: 32px;
+            color: ${iconColor};
         }
-        .message {
-            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #1d4ed8;
+        }
+        .btn svg {
+            width: 18px;
+            height: 18px;
         }
         .footer {
-            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            color: #9ca3af;
         }
-        .support-btn {
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            animation: fadeInUp 0.8s ease-out 0.5s backwards;
+        .footer a {
+            color: #2563eb;
+            text-decoration: none;
         }
-        .support-btn:hover {
-            background: rgba(255, 255, 255, 0.35);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
-        }
-        .divider {
-            animation: fadeInUp 0.8s ease-out 0.45s backwards;
-        }
-        .emoji {
-            font-size: 3rem;
-            animation: scaleIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
+        .footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="card max-w-2xl w-full p-8 md:p-14 text-center relative">
-        <div class="emoji mb-4">${emoji}</div>
-        <div class="icon-container mx-auto flex items-center justify-center h-24 w-24 md:h-28 md:w-28 rounded-full bg-gradient-to-br ${iconGradient} mb-8 shadow-2xl">
-            <svg class="h-12 w-12 md:h-14 md:w-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                ${icon}
-            </svg>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="icon">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    ${icon}
+                </svg>
+            </div>
+            <h1>${title}</h1>
+            <p>${result.message}</p>
+            <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer" class="btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                Contact Support
+            </a>
         </div>
-        <h1 class="title text-4xl md:text-6xl font-black text-white mb-8 tracking-tight">${title}</h1>
-        <div class="divider h-1 w-24 bg-white/40 rounded-full mx-auto mb-8"></div>
-        <p class="message text-lg md:text-xl text-white/95 leading-relaxed mb-10 max-w-xl mx-auto font-medium">${result.message}</p>
-        <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer" class="support-btn inline-flex items-center gap-3 px-8 py-4 rounded-full text-white font-bold text-lg border-2 border-white/40 shadow-xl">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-            </svg>
-            Contact Support
-        </a>
-    </div>
-    <div class="footer mt-10 text-center">
-        <p class="text-white/80 text-base font-medium">Need assistance? <a href="https://multichat.cloud/support" class="text-white font-bold hover:underline decoration-2 underline-offset-4" target="_blank" rel="noopener noreferrer">Visit our support page</a></p>
+        <div class="footer">
+            Need assistance? <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer">Visit our support page</a>
+        </div>
     </div>
 </body>
 </html>`;
