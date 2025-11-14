@@ -56,6 +56,8 @@ export class WebServer {
   }
 
   private setupRoutes() {
+    this.app.use(express.static('public'));
+    
     this.app.get('/verify', async (req, res) => {
       const { code, state } = req.query;
 
@@ -436,8 +438,8 @@ export class WebServer {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Error</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Verification Error - Multi-Verif</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -446,36 +448,59 @@ export class WebServer {
         }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f8f9fa;
-            color: #1f2937;
-            line-height: 1.6;
-        }
-        .container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 2rem 1rem;
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
         .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 480px;
             width: 100%;
             padding: 3rem 2rem;
             text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            animation: fadeIn 0.6s ease-out 0.1s backwards;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .brand {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+            font-weight: 500;
         }
         .icon {
             width: 64px;
             height: 64px;
-            background: #fee;
+            background: linear-gradient(135deg, #fee 0%, #fdd 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
         }
         .icon svg {
             width: 32px;
@@ -483,69 +508,65 @@ export class WebServer {
             color: #dc2626;
         }
         h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #111827;
+            font-size: 1.875rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #111827 0%, #374151 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
+            animation: fadeIn 0.6s ease-out 0.2s backwards;
         }
         p {
             font-size: 1rem;
             color: #6b7280;
             margin-bottom: 2rem;
+            line-height: 1.6;
+            animation: fadeIn 0.6s ease-out 0.3s backwards;
         }
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            animation: fadeIn 0.6s ease-out 0.4s backwards;
         }
         .btn:hover {
-            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
         }
         .btn svg {
             width: 18px;
             height: 18px;
         }
-        .footer {
-            margin-top: 2rem;
-            font-size: 0.875rem;
-            color: #9ca3af;
-        }
-        .footer a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="icon">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </div>
-            <h1>Verification Error</h1>
-            <p>${message}</p>
-            <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer" class="btn">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
-                Contact Support
-            </a>
+    <div class="card">
+        <div class="logo">
+            <img src="/logo.png" alt="Multi-Verif">
         </div>
-        <div class="footer">
-            Need assistance? <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer">Visit our support page</a>
+        <div class="brand">Multi-Verif by MultiChat</div>
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
         </div>
+        <h1>Verification Error</h1>
+        <p>${message}</p>
+        <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer" class="btn">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            Contact Support
+        </a>
     </div>
 </body>
 </html>`;
@@ -554,23 +575,27 @@ export class WebServer {
   private renderResultPage(result: any): string {
     const isSuccess = result.success;
     
-    let iconBg = '#fee';
+    let gradientBg = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    let iconGradient = 'linear-gradient(135deg, #fee 0%, #fdd 100%)';
     let iconColor = '#dc2626';
     let icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
     let title = 'Verification Failed';
 
     if (isSuccess) {
-      iconBg = '#d1fae5';
+      gradientBg = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+      iconGradient = 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)';
       iconColor = '#059669';
       icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />';
       title = 'Verification Successful';
     } else if (result.reason === 'alt_account') {
-      iconBg = '#fee2e2';
+      gradientBg = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+      iconGradient = 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)';
       iconColor = '#dc2626';
       icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />';
       title = 'Alternate Account Detected';
     } else if (result.reason === 'proxy') {
-      iconBg = '#dbeafe';
+      gradientBg = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+      iconGradient = 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)';
       iconColor = '#2563eb';
       icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />';
       title = 'VPN/Proxy Detected';
@@ -582,8 +607,8 @@ export class WebServer {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>${title} - Multi-Verif</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -592,36 +617,63 @@ export class WebServer {
         }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f8f9fa;
-            color: #1f2937;
-            line-height: 1.6;
-        }
-        .container {
+            background: ${gradientBg};
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 2rem 1rem;
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        @keyframes checkmark {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
         .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 480px;
             width: 100%;
             padding: 3rem 2rem;
             text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            animation: fadeIn 0.6s ease-out 0.1s backwards;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .brand {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+            font-weight: 500;
         }
         .icon {
             width: 64px;
             height: 64px;
-            background: ${iconBg};
+            background: ${iconGradient};
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
         }
         .icon svg {
             width: 32px;
@@ -629,70 +681,65 @@ export class WebServer {
             color: ${iconColor};
         }
         h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #111827;
+            font-size: 1.875rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #111827 0%, #374151 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
+            animation: fadeIn 0.6s ease-out 0.2s backwards;
         }
         p {
             font-size: 1rem;
             color: #6b7280;
             margin-bottom: 2rem;
             line-height: 1.6;
+            animation: fadeIn 0.6s ease-out 0.3s backwards;
         }
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            animation: fadeIn 0.6s ease-out 0.4s backwards;
         }
         .btn:hover {
-            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
         }
         .btn svg {
             width: 18px;
             height: 18px;
         }
-        .footer {
-            margin-top: 2rem;
-            font-size: 0.875rem;
-            color: #9ca3af;
-        }
-        .footer a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="icon">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    ${icon}
-                </svg>
-            </div>
-            <h1>${title}</h1>
-            <p>${result.message}</p>
-            <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer" class="btn">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
-                Contact Support
-            </a>
+    <div class="card">
+        <div class="logo">
+            <img src="/logo.png" alt="Multi-Verif">
         </div>
-        <div class="footer">
-            Need assistance? <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer">Visit our support page</a>
+        <div class="brand">Multi-Verif by MultiChat</div>
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                ${icon}
+            </svg>
         </div>
+        <h1>${title}</h1>
+        <p>${result.message}</p>
+        <a href="https://multichat.cloud/support" target="_blank" rel="noopener noreferrer" class="btn">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            Contact Support
+        </a>
     </div>
 </body>
 </html>`;
