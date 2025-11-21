@@ -2,9 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 import { CONFIG } from '../config';
 import { prisma } from '../database';
 import fetch from 'node-fetch';
+import { adminRouter } from './adminRoutes';
 
 export class WebServer {
   private app: express.Application;
@@ -31,9 +33,11 @@ export class WebServer {
     }));
     
     this.app.use(cors({
-      origin: CONFIG.server.baseUrl,
+      origin: true,
       credentials: true,
     }));
+
+    this.app.use(cookieParser());
 
     const limiter = rateLimit({
       windowMs: 15 * 60 * 1000,
@@ -134,22 +138,67 @@ export class WebServer {
       }
     });
 
+    this.app.use('/api/admin', adminRouter);
+
     this.app.get('/health', (req, res) => {
       res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    });
+
+    this.app.use(express.static('client/dist'));
+    
+    this.app.get('*', (req, res) => {
+      if (!req.path.startsWith('/api') && !req.path.startsWith('/verify') && !req.path.startsWith('/health')) {
+        res.sendFile('index.html', { root: 'client/dist' });
+      }
     });
   }
 
   private async processVerification(discordId: string, ipAddress: string, session: any) {
     try {
-      const ipCheckResult = await this.checkIP(ipAddress);
-      if (ipCheckResult.isProxy) {
-        await this.logVerificationAttempt(discordId, ipAddress, session.guildId, session.roleId, false, 'proxy');
-        await this.logToWebhook(session, discordId, ipAddress, false, 'Verification failed: VPN/Proxy detected');
+      const blacklistedIP = await prisma.blacklist.findFirst({
+        where: { ipAddress, guildId: session.guildId },
+      });
+      if (blacklistedIP) {
+        await this.logVerificationAttempt(discordId, ipAddress, session.guildId, session.roleId, false, 'blacklisted_ip');
+        await this.logToWebhook(session, discordId, ipAddress, false, 'Verification failed: IP is blacklisted');
         return {
           success: false,
-          reason: 'proxy',
-          message: 'Verification failed: VPN/Proxy detected. Please disable your VPN and try again.',
+          reason: 'blacklisted',
+          message: 'Your IP address has been blacklisted. Please contact an administrator.',
         };
+      }
+
+      const blacklistedUser = await prisma.blacklist.findFirst({
+        where: { discordId, guildId: session.guildId },
+      });
+      if (blacklistedUser) {
+        await this.logVerificationAttempt(discordId, ipAddress, session.guildId, session.roleId, false, 'blacklisted_user');
+        await this.logToWebhook(session, discordId, ipAddress, false, 'Verification failed: User is blacklisted');
+        return {
+          success: false,
+          reason: 'blacklisted',
+          message: 'You have been blacklisted from verification. Please contact an administrator.',
+        };
+      }
+
+      const whitelistedIP = await prisma.whitelist.findFirst({
+        where: { ipAddress, guildId: session.guildId },
+      });
+      const whitelistedUser = await prisma.whitelist.findFirst({
+        where: { discordId, guildId: session.guildId },
+      });
+
+      if (!whitelistedIP && !whitelistedUser) {
+        const ipCheckResult = await this.checkIP(ipAddress);
+        if (ipCheckResult.isProxy) {
+          await this.logVerificationAttempt(discordId, ipAddress, session.guildId, session.roleId, false, 'proxy');
+          await this.logToWebhook(session, discordId, ipAddress, false, 'Verification failed: VPN/Proxy detected');
+          return {
+            success: false,
+            reason: 'proxy',
+            message: 'Verification failed: VPN/Proxy detected. Please disable your VPN and try again.',
+          };
+        }
       }
 
       const existingUser = await prisma.user.findFirst({
@@ -161,7 +210,7 @@ export class WebServer {
         },
       });
 
-      if (existingUser) {
+      if (existingUser && !whitelistedIP && !whitelistedUser) {
         await this.logVerificationAttempt(discordId, ipAddress, session.guildId, session.roleId, false, 'alt_account');
         await this.logToWebhook(session, discordId, ipAddress, false, `Verification failed: Alt account detected. Original account: ${existingUser.discordId}`);
         return {

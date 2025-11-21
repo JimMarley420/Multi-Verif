@@ -1,0 +1,31 @@
+.list-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.add-form {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.add-form select,
+.add-form input {
+  width: 100%;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.filter-select {
+  max-width: 200px;
+}

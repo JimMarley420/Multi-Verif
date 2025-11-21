@@ -14,9 +14,9 @@ export const CONFIG = {
     url: process.env.DATABASE_URL!,
   },
   server: {
-    port: parseInt(process.env.PORT || '3000'),
-    host: process.env.HOST || 'localhost',
-    baseUrl: process.env.BASE_URL || 'http://localhost:3000',
+    port: parseInt(process.env.PORT || '5000'),
+    host: process.env.HOST || '0.0.0.0',
+    baseUrl: process.env.BASE_URL || 'http://localhost:5000',
   },
   ipapi: {
     apiKey: process.env.IPAPI_API_KEY!,

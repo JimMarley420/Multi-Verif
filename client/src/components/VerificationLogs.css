@@ -1,0 +1,9 @@
+.verification-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter-select {
+  max-width: 200px;
+}

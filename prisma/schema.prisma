@@ -65,3 +65,47 @@ model DiscordToken {
   
   @@map("discord_tokens")
 }
+
+model Whitelist {
+  id          String   @id @default(cuid())
+  ipAddress   String?
+  discordId   String?
+  guildId     String
+  reason      String?
+  addedBy     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([ipAddress, guildId])
+  @@unique([discordId, guildId])
+  @@map("whitelists")
+}
+
+model Blacklist {
+  id          String   @id @default(cuid())
+  ipAddress   String?
+  discordId   String?
+  guildId     String
+  reason      String?
+  addedBy     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([ipAddress, guildId])
+  @@unique([discordId, guildId])
+  @@map("blacklists")
+}
+
+model AdminSession {
+  id              String   @id @default(cuid())
+  sessionToken    String   @unique
+  discordId       String
+  discordUsername String
+  discordAvatar   String?
+  guildId         String
+  ipAddress       String
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+  
+  @@map("admin_sessions")
+}

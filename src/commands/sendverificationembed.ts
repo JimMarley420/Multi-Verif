@@ -106,16 +106,25 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     });
 
     const embed = new EmbedBuilder()
-      .setTitle(title)
-      .setDescription(description)
-      .setColor('#00b0f4')
+      .setTitle(`🛡️ ${title}`)
+      .setDescription(`${description}\n\n✨ **Cliquez sur le bouton ci-dessous pour commencer la vérification**`)
+      .setColor(0x5865F2)
       .setTimestamp()
-      .setFooter({ text: 'Click verify!' });
+      .setFooter({ 
+        text: 'Vérification sécurisée • VeeriBot',
+        iconURL: 'https://cdn.discordapp.com/emojis/1234567890.png'
+      })
+      .addFields(
+        { name: '📝 Instructions', value: 'Cliquez sur **Vérifier** pour commencer', inline: false },
+        { name: '🎯 Rôle', value: `<@&${role.id}>`, inline: true },
+        { name: '⏱️ Expiration', value: expireMin === 0 ? 'Jamais' : `${expireMin} minutes`, inline: true }
+      );
 
     const verifyButton = new ButtonBuilder()
       .setCustomId(`verify_${state}`)
-      .setLabel('Verify')
-      .setStyle(ButtonStyle.Primary);
+      .setLabel('✅ Vérifier')
+      .setStyle(ButtonStyle.Success)
+      .setEmoji('🔐');
 
     const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(verifyButton);
