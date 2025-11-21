@@ -1,0 +1,39 @@
+
+/root/VeeriBot/node_modules/ts-node/src/index.ts:859
+    return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+           ^
+TSError: ⨯ Unable to compile TypeScript:
+src/web/server.ts:5:26 - error TS2307: Cannot find module 'cookie-parser' or its corresponding type declarations.
+
+5 import cookieParser from 'cookie-parser';
+                           ~~~~~~~~~~~~~~~
+src/web/server.ts:158:42 - error TS2339: Property 'blacklist' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+158       const blacklistedIP = await prisma.blacklist.findFirst({
+                                             ~~~~~~~~~
+src/web/server.ts:171:44 - error TS2339: Property 'blacklist' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+171       const blacklistedUser = await prisma.blacklist.findFirst({
+                                               ~~~~~~~~~
+src/web/server.ts:184:42 - error TS2339: Property 'whitelist' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+184       const whitelistedIP = await prisma.whitelist.findFirst({
+                                             ~~~~~~~~~
+src/web/server.ts:187:44 - error TS2339: Property 'whitelist' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+187       const whitelistedUser = await prisma.whitelist.findFirst({
+                                               ~~~~~~~~~
+
+    at createTSError (/root/VeeriBot/node_modules/ts-node/src/index.ts:859:12)
+    at reportTSError (/root/VeeriBot/node_modules/ts-node/src/index.ts:863:19)
+    at getOutput (/root/VeeriBot/node_modules/ts-node/src/index.ts:1077:36)
+    at Object.compile (/root/VeeriBot/node_modules/ts-node/src/index.ts:1433:41)
+    at Module.m._compile (/root/VeeriBot/node_modules/ts-node/src/index.ts:1617:30)
+    at node:internal/modules/cjs/loader:1895:10
+    at Object.require.extensions.<computed> [as .ts] (/root/VeeriBot/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14) {
+  diagnosticCodes: [ 2307, 2339, 2339, 2339, 2339 ]
+}
+root@multichat:~/VeeriBot#
