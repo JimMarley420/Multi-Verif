@@ -19,7 +19,7 @@ model User {
   verifiedAt   DateTime @default(now())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  
+
   @@unique([discordId, guildId, roleId])
   @@map("users")
 }
@@ -33,7 +33,7 @@ model VerificationAttempt {
   success     Boolean
   reason      String?
   createdAt   DateTime @default(now())
-  
+
   @@map("verification_attempts")
 }
 
@@ -47,7 +47,7 @@ model VerificationSession {
   webhookUrl  String?
   expiresAt   DateTime
   createdAt   DateTime @default(now())
-  
+
   @@map("verification_sessions")
 }
 
@@ -62,7 +62,7 @@ model DiscordToken {
   ipAddress    String
   guildId      String
   createdAt    DateTime @default(now())
-  
+
   @@map("discord_tokens")
 }
 
@@ -75,7 +75,7 @@ model Whitelist {
   addedBy     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   @@unique([ipAddress, guildId])
   @@unique([discordId, guildId])
   @@map("whitelists")
@@ -90,7 +90,7 @@ model Blacklist {
   addedBy     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   @@unique([ipAddress, guildId])
   @@unique([discordId, guildId])
   @@map("blacklists")
@@ -106,6 +106,6 @@ model AdminSession {
   ipAddress       String
   expiresAt       DateTime
   createdAt       DateTime @default(now())
-  
+
   @@map("admin_sessions")
 }
