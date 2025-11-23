@@ -162,6 +162,10 @@ export class WebServer {
         return res.status(403).send('ALL OK');
       }
     });
+
+    this.app.get('/ok', (req, res) => {
+      res.status(200).send('ALL OK');
+    });
   }
 
   private async processVerification(discordId: string, ipAddress: string, session: any) {
