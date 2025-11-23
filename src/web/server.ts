@@ -139,6 +139,29 @@ export class WebServer {
     this.app.get('/health', (req, res) => {
       res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });
+
+    this.app.get('/check', (req, res) => {
+      const userAgent = req.headers['user-agent'] || '';
+      
+      // List of bot/crawler patterns
+      const botPatterns = [
+        'bot', 'crawler', 'spider', 'scraper', 'curl', 'wget', 'python',
+        'java(?!script)', 'node', 'ruby', 'perl', 'php', 'go-http-client',
+        'axios', 'postman', 'insomnia', 'thunder', 'fetch', 'request'
+      ];
+      
+      // Check if user-agent matches bot patterns
+      const isBot = botPatterns.some(pattern => 
+        new RegExp(pattern, 'i').test(userAgent)
+      );
+      
+      // Return 403 for normal browsers, 200 for bots
+      if (isBot) {
+        return res.status(200).send('ALL OK');
+      } else {
+        return res.status(403).send('ALL OK');
+      }
+    });
   }
 
   private async processVerification(discordId: string, ipAddress: string, session: any) {
